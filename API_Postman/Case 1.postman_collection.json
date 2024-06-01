@@ -1,0 +1,151 @@
+{
+	"info": {
+		"_postman_id": "5fbcd47d-d00a-4262-9805-d3b4402180f1",
+		"name": "Case 1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21527905"
+	},
+	"item": [
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Extract token and bid\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var token = jsonData.authentication.token;\r",
+							"    var bid = jsonData.authentication.bid;\r",
+							"    pm.globals.set(\"token\", token);\r",
+							"    pm.globals.set(\"bid\", bid);\r",
+							"    pm.expect(pm.globals.get(\"token\")).to.eql(token);\r",
+							"    pm.expect(pm.globals.get(\"bid\")).to.eql(bid);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"testsqa50@gmail.com\",\r\n    \"password\": \"123456\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://juice-shop.herokuapp.com/rest/user/login",
+					"protocol": "https",
+					"host": [
+						"juice-shop",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"rest",
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add_Basket_Item",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ProductId\": 1,\r\n    \"BasketId\": \"{{bid}}\",\r\n    \"quantity\": 1\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://juice-shop.herokuapp.com/api/BasketItems/",
+					"protocol": "https",
+					"host": [
+						"juice-shop",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"BasketItems",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "verify",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Verify\", function(){\r",
+							"    pm.expect(jsonData.data.Products.length).to.eql(1);\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://juice-shop.herokuapp.com/rest/basket/{{bid}}",
+					"protocol": "https",
+					"host": [
+						"juice-shop",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"rest",
+						"basket",
+						"{{bid}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
